@@ -36,6 +36,12 @@ io.on('connection', function (socket) {
         socket.room_joined = msg
         console.log(socket.room_joined)
 
+        // a voir sans fonction fléchée
+        io.of('/').in(msg).clients((error,client) => {
+            if (error) throw error;
+            console.log(client);
+        });
+        console.log(socket.id)
 
         socket.on('chat message', function (msg) {
             console.log('message: ' + msg);
