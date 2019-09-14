@@ -1,0 +1,60 @@
+div.hidden{
+    display: none
+}
+
+body {
+    font: 13px Helvetica, Arial; 
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; 
+}
+
+form{
+    background: #000;
+    padding: 3px;
+    position: absolute;
+    bottom: 0; 
+    width: auto; 
+}
+
+form input {
+    border: 0;
+    padding: 10px;
+    width: auto;
+}
+
+form button{ 
+    min-width: 5%;
+    background: rgb(130, 224, 255);
+    border: none;
+    padding: 10px; 
+}
+
+#messages li {
+    padding: 5px 10px;
+}
+
+#messages li:nth-child(odd) {
+    background: #eee; 
+}
+
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    grid-auto-rows: minmax(100px, auto);
+    grid-template-columns: 80% auto;
+}
+
+.one {
+    grid-column: 1 / 2;
+    grid-row: 1;
+}
+
+.two {
+    grid-column: 2/2;
+    grid-row: 1;
+}

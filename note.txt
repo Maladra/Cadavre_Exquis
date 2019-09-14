@@ -1,0 +1,35 @@
+(1-5)
+
+si -3 participants ordinateur occupe un rôle (sujet verbe complement)
+
+
+10 secondes par participants
+
+
+
+player1
+player2
+player3
+
+array_player = [player1,player2,player3]
+
+
+AVANT LA PARTIE :
+
+
+DEBUT DE LA PARTIE :
+
+
+MILIEUR DE LA PARTIE :
+
+
+FIN DE LA PARTIE :
+
+
+APRES LA PARTIE : 
+
+SI NOUVELLE CONNEXION:
+
+
+SI DECONNEXION : 
+
