@@ -50,8 +50,10 @@ socket.on('chat message', function(msg){
   });
 
 socket.on('game_role', function (msg){
-    $('#game_reponse_label').text(msg)
-    $('#reponse').fadeIn("fast")
+    $('#wait_game').fadeOut("fast", function () {
+        $('#game_reponse_label').text(msg)
+        $('#reponse').fadeIn("fast")
+    });
 
 })
 });
