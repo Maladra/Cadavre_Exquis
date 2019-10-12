@@ -20,27 +20,58 @@ io.on('connection', function (socket) {
     // on socket disconnect
     socket.on('disconnect', function () {
         console.log('user disconnected')
-        console.log(socket.room_joined)
-        io.of('/').in(socket.room_joined).clients(function(error,client){
-            if (error) throw error;
-            console.log(client.length)
-         
-        });
+        if (typeof(socket.room_joined) == 'string') {
+            var room_leaved = room_list.find(r => r.room_name == socket.room_joined)
+            io.of('/').in(socket.room_joined).clients(function(error,client){
+                if (error) throw error;
+                if (client.length <= 0)
+                {
+                    console.log("client inférieur a 0")
+                    console.log(typeof(room_leaved.room_name))
+                    clearInterval(room_leaved.loop_game)
+                    console.log(room_list.length)
+                    for (var i = 0; i < room_list.length; i++){
+                        console.log(i)
+                        if (room_list[i].room_name == room_leaved.room_name){
+                            console.log(typeof(room_list[i].room_name))
+                            room_list.splice(0,1)
+                            console.log(room_list)
+                        }
+                    }
+                }
+            });
+
+        }
+        
     });
 
     // on user join a room
     // set socket.room_joined
     socket.on('join_room', function (msg) {
         if(room_exist(msg)){
-            socket.join(msg)
-            socket.room_joined = msg
             console.log("la salle existe deja")
+            socket.room_joined = msg
+            io.of('/').in(socket.room_joined).clients(function(error,client){
+                if (error) throw error;
+                if (client.length < 1)
+                {
+                    socket.join(msg)
+        
+        
+                    console.log("room joined")
+                }
+                else {
+                    console.log("salle pleine")
+                }
+            });
+
+
         }
         else{
             socket.join(msg)
             console.log("la salle n'existe pas")
             socket.room_joined = msg
-            setInterval(game_test, 10000, socket.room_joined, socket)
+            room_list.push(new game_room(socket.room_joined, setInterval(game_test, 30000, socket.room_joined, socket)))
 
         }
         console.log(socket.room_joined)
@@ -143,6 +174,11 @@ class player_role {
 }
 
 
-// KILL SETINTERVAL WHEN USER IN ROOM is 0 
+class game_room {
+    constructor(room_name, loop_game) {
+        this.room_name = room_name;
+        this.loop_game = loop_game;
+    }
+}
+
 // CONTINUER FUNCTION GAME ( next time may-be a RELEASE ? :DDD)
-//
