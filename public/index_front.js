@@ -28,6 +28,13 @@ const join_room = function () {
     
 }
 
+const send_reponse_game = function () {
+    reponse = $('#reponse_game').val();
+    alert (reponse)
+    socket.emit('game_reponse', reponse)
+    
+}
+
 // event send username on server display the room selector
 $('#validate_username').click(function () {
     send_username()
@@ -55,5 +62,11 @@ socket.on('game_role', function (msg){
         $('#reponse').fadeIn("fast")
     });
 
+})
+
+
+$('#game_reponse_click').click(function () {
+    send_reponse_game()
+    
 })
 });

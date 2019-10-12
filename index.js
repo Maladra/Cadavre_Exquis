@@ -20,6 +20,12 @@ io.on('connection', function (socket) {
     // on socket disconnect
     socket.on('disconnect', function () {
         console.log('user disconnected')
+        console.log(socket.room_joined)
+        io.of('/').in(socket.room_joined).clients(function(error,client){
+            if (error) throw error;
+            console.log(client.length)
+         
+        });
     });
 
     // on user join a room
@@ -34,7 +40,8 @@ io.on('connection', function (socket) {
             socket.join(msg)
             console.log("la salle n'existe pas")
             socket.room_joined = msg
-            game_test(socket_joined=socket.room_joined)
+            setInterval(game_test, 10000, socket.room_joined, socket)
+
         }
         console.log(socket.room_joined)
 
@@ -43,9 +50,6 @@ io.on('connection', function (socket) {
             console.log(socket.room_joined)
             io.in(socket.room_joined).emit('chat message', socket.username +" : " + msg);
         });
-        socket.on('disconnect', function(){
-            console.log("room leaved")
-        })
     });
 });
 
@@ -66,17 +70,14 @@ function room_exist(msg) {
     return existe;
 };
 
-
-
-
-
-function game_test(socket_joined) {
+function game_test(socket_joined,socket) {
     var role = ["sujet", "verbe","complement"]
     var controle = 0
 
     setTimeout(function () {
     io.of('/').in(socket_joined).clients(function(error,client){
             if (error) throw error;
+
             client.forEach(function (user) {
                 io.to(user).emit('game_role',role[controle]);
                 console.log(user);
@@ -84,12 +85,18 @@ function game_test(socket_joined) {
                 if (controle > 2){
                     controle = 0;
                 }
-                
             });
+          
         });
-    }, 10000);
-};
 
+        setTimeout(function () {
+            console.log("send response")
+        }, 15000);
+    }, 10000);
+    socket.on('game_reponse',function (msg) {
+        console.log(msg)
+    })
+};
 
 function game(user_array) {
     var role = ["sujet","verbe","complement"]
@@ -121,7 +128,6 @@ function game(user_array) {
                 }
             }
 
-            
         });
 
 
@@ -135,3 +141,8 @@ class player_role {
         this.id = id;
     }
 }
+
+
+// KILL SETINTERVAL WHEN USER IN ROOM is 0 
+// CONTINUER FUNCTION GAME ( next time may-be a RELEASE ? :DDD)
+//
