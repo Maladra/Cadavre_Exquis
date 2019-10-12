@@ -48,4 +48,10 @@ $('form').submit(function(e){
 socket.on('chat message', function(msg){
     $('#messages').append($('<li>').text(msg));
   });
+
+socket.on('game_role', function (msg){
+    $('#game_reponse_label').text(msg)
+    $('#reponse').fadeIn("fast")
+
+})
 });
