@@ -69,7 +69,7 @@ io.on('connection', function (socket) {
             socket.join(msg)
             console.log("la salle n'existe pas")
             socket.room_joined = msg
-            room_list.push(new game_room(socket.room_joined, setInterval(game_test, 30000, socket.room_joined, socket)))
+            room_list.push(new game_room(socket.room_joined, setInterval(game, 30000, socket.room_joined, socket)))
 
         }
         console.log(socket.room_joined)
@@ -124,7 +124,7 @@ function room_exist(msg) {
     return existe;
 };
 // represente la loop du jeu
-function game_test(socket_joined,socket) {
+function game(socket_joined,socket) {
     var role = ["sujet", "verbe","complement"]
     var controle = 0
     var player_role_array = []
@@ -144,7 +144,6 @@ function game_test(socket_joined,socket) {
                     controle = 0;
                 }
             });
-          
         });
 
         setTimeout(function () {
@@ -155,6 +154,10 @@ function game_test(socket_joined,socket) {
 
                 client.forEach(function (user) {
                     io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + " " + get_room_joined.complement)
+                    delete get_room_joined.sujet
+                    delete get_room_joined.verbe
+                    delete get_room_joined.complement
+                    
                     var user_get_response = player_role_array.find(r => r.id == user)
                     console.log(user_get_response)
                 })
@@ -179,6 +182,3 @@ class game_room {
         this.complement = complement
     }
 }
-
-// CONTINUER FUNCTION GAME ( next time may-be a RELEASE ? :DDD)
-// VOIR PEUT-ÊTRE SOIT PASSER PLUSIEURS SOCKET (???) SORTIR L'EVENT GAME RESPONSE ET GERER AVEC CLASS/ARRAY
