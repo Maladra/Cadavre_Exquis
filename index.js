@@ -27,6 +27,7 @@ io.on('connection', function (socket) {
                 if (client.length <= 0)
                 {
                     console.log("client inférieur a 0")
+                    console.log(socket.role)
                     clearInterval(room_leaved.loop_game)
                     console.log(room_list.length)
                     for (var i = 0; i < room_list.length; i++){
@@ -79,6 +80,31 @@ io.on('connection', function (socket) {
             io.in(socket.room_joined).emit('chat message', socket.username +" : " + msg);
         });
     });
+
+    socket.on('game_reponse', function (msg) {
+        console.log(msg)
+        console.log(socket.role)
+        console.log(socket.room_joined)
+        var get_room_joined = room_list.find(r => r.room_name == socket.room_joined)
+        if (socket.role == "sujet"){
+            get_room_joined.sujet = msg
+        }
+        
+        if (socket.role == "complement")
+        {
+         get_room_joined.complement = msg
+        }
+        
+        if (socket.role == "verbe")
+        {
+            get_room_joined.verbe = msg
+        }
+
+        console.log(get_room_joined)
+
+    })
+
+
 });
 
 http.listen(3000, function () {
@@ -101,11 +127,7 @@ function room_exist(msg) {
 function game_test(socket_joined,socket) {
     var role = ["sujet", "verbe","complement"]
     var controle = 0
-    var game_response
     var player_role_array = []
-    var sujet_reponse
-    var verbe_reponse
-    var complement_reponse
     setTimeout(function () {
     io.of('/').in(socket_joined).clients(function(error,client){
             if (error) throw error;
@@ -114,6 +136,9 @@ function game_test(socket_joined,socket) {
                 io.to(user).emit('game_role',role[controle]);
                 player_role_array.push(new player_role(role[controle],user))
                 console.log(socket.room_joined);
+                var my_socket = io.of('/').connected[user]
+                my_socket.role = role[controle]
+                console.log(my_socket.role)
                 controle = controle+1;
                 if (controle > 2){
                     controle = 0;
@@ -124,62 +149,18 @@ function game_test(socket_joined,socket) {
 
         setTimeout(function () {
             console.log("send response")
+            var get_room_joined = room_list.find(r => r.room_name == socket_joined)
             io.of('/').in(socket_joined).clients(function (error,client){
                 if (error) throw error;
 
                 client.forEach(function (user) {
-                    io.to(user).emit('game_response', game_response)
+                    io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + " " + get_room_joined.complement)
                     var user_get_response = player_role_array.find(r => r.id == user)
                     console.log(user_get_response)
-                    
                 })
-                
             })
         }, 15000);
     }, 10000);
-    io.on('game_reponse',function (msg) {
-        console.log(msg)
-        game_response = msg;
-        console.log(socket_joined)
-        console.log(socket.id)
-    })
-};
-
-function game(user_array) {
-    var role = ["sujet","verbe","complement"]
-    var controle = 0
-    var player_role_array = [];
-    var phrase = ["empty","empty","empty"];
-    
-    user_array.forEach(function (user) {
-        io.to(user).emit('game_role',role[controle]);
-        player_role_array.push(new player_role(role[controle], user))
-        controle = controle+1;
-
-    });
-    socket.on('game_reponse',function (reponse) {
-        console.log(socket.id);
-        player_role_array.forEach(player => {
-            if (player.id == socket.id){
-                if (player.role == "sujet"){
-                    role[0] = reponse;
-
-                }
-                if (player.role == "verbe"){
-                    role[1] = reponse;
-
-                }
-                if (player.role == "complement"){
-                    role[2] = reponse;
-
-                }
-            }
-
-        });
-
-
-        
-    })
 };
 
 class player_role {
@@ -189,11 +170,13 @@ class player_role {
     }
 }
 
-
 class game_room {
-    constructor(room_name, loop_game) {
+    constructor(room_name, loop_game, sujet, verbe, complement) {
         this.room_name = room_name;
         this.loop_game = loop_game;
+        this.sujet = sujet
+        this.verbe = verbe
+        this.complement = complement
     }
 }
 
