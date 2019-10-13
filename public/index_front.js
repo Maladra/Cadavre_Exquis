@@ -30,7 +30,6 @@ const join_room = function () {
 
 const send_reponse_game = function () {
     reponse = $('#reponse_game').val();
-    alert (reponse)
     socket.emit('game_reponse', reponse)
     
 }
@@ -61,7 +60,9 @@ socket.on('game_role', function (msg){
         $('#game_reponse_label').text(msg)
         $('#reponse').fadeIn("fast")
     });
-
+})
+socket.on('game_response', function (msg) {
+    alert(msg)
 })
 
 

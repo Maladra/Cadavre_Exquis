@@ -7,7 +7,7 @@ var room_list = [];
 
 app.use(express.static(__dirname + "/public"));
 
-//creation socket
+// Creation socket
 io.on('connection', function (socket) {
     console.log('a user connected');
     
@@ -27,7 +27,6 @@ io.on('connection', function (socket) {
                 if (client.length <= 0)
                 {
                     console.log("client inférieur a 0")
-                    console.log(typeof(room_leaved.room_name))
                     clearInterval(room_leaved.loop_game)
                     console.log(room_list.length)
                     for (var i = 0; i < room_list.length; i++){
@@ -53,7 +52,7 @@ io.on('connection', function (socket) {
             socket.room_joined = msg
             io.of('/').in(socket.room_joined).clients(function(error,client){
                 if (error) throw error;
-                if (client.length < 1)
+                if (client.length < 5)
                 {
                     socket.join(msg)
         
@@ -64,8 +63,6 @@ io.on('connection', function (socket) {
                     console.log("salle pleine")
                 }
             });
-
-
         }
         else{
             socket.join(msg)
@@ -88,7 +85,7 @@ http.listen(3000, function () {
     console.log('listening on *:3000');
 });
 
-
+// Test l'existence de la room
 function room_exist(msg) {
     var existe = false
     for (let key in io.sockets.adapter.rooms) // permet d'avoir la liste des rooms
@@ -100,18 +97,23 @@ function room_exist(msg) {
     }
     return existe;
 };
-
+// represente la loop du jeu
 function game_test(socket_joined,socket) {
     var role = ["sujet", "verbe","complement"]
     var controle = 0
-
+    var game_response
+    var player_role_array = []
+    var sujet_reponse
+    var verbe_reponse
+    var complement_reponse
     setTimeout(function () {
     io.of('/').in(socket_joined).clients(function(error,client){
             if (error) throw error;
 
             client.forEach(function (user) {
                 io.to(user).emit('game_role',role[controle]);
-                console.log(user);
+                player_role_array.push(new player_role(role[controle],user))
+                console.log(socket.room_joined);
                 controle = controle+1;
                 if (controle > 2){
                     controle = 0;
@@ -122,10 +124,24 @@ function game_test(socket_joined,socket) {
 
         setTimeout(function () {
             console.log("send response")
+            io.of('/').in(socket_joined).clients(function (error,client){
+                if (error) throw error;
+
+                client.forEach(function (user) {
+                    io.to(user).emit('game_response', game_response)
+                    var user_get_response = player_role_array.find(r => r.id == user)
+                    console.log(user_get_response)
+                    
+                })
+                
+            })
         }, 15000);
     }, 10000);
-    socket.on('game_reponse',function (msg) {
+    io.on('game_reponse',function (msg) {
         console.log(msg)
+        game_response = msg;
+        console.log(socket_joined)
+        console.log(socket.id)
     })
 };
 
@@ -182,3 +198,4 @@ class game_room {
 }
 
 // CONTINUER FUNCTION GAME ( next time may-be a RELEASE ? :DDD)
+// VOIR PEUT-ÊTRE SOIT PASSER PLUSIEURS SOCKET (???) SORTIR L'EVENT GAME RESPONSE ET GERER AVEC CLASS/ARRAY
