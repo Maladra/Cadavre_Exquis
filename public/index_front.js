@@ -51,23 +51,28 @@ $('form').submit(function(e){
     $('#m').val('');
     return false;
 });
+
 socket.on('chat message', function(msg){
     $('#messages').append($('<li>').text(msg));
   });
 
 socket.on('game_role', function (msg){
+
     $('#wait_game').fadeOut("fast", function () {
-        $('#game_reponse_label').text(msg)
-        $('#reponse').fadeIn("fast")
+        $('#reponse_text').fadeOut("fast")
+        $('#game_reponse_label').text(msg +" :")
+        $('#game_interact').fadeIn("fast")
     });
 })
-socket.on('game_response', function (msg) {
-    alert(msg)
-})
 
+socket.on('game_response', function (msg) {
+    $("#game_interact").fadeOut("fast", function () {
+        $('#reponse_text').text(msg);
+        $('#reponse_text').fadeIn("fast")
+    });
+})
 
 $('#game_reponse_click').click(function () {
     send_reponse_game()
-    
 })
 });

@@ -34,11 +34,14 @@
 
             <div id="wait_game"><h3>EN ATTENTE DE LA PROCHAINE PARTIE</h3></div>
 
-                <div id="reponse" class="hidden">
-                    <label for="reponse_game" id="game_reponse_label"></label>
-                    <input type="text" id="reponse_game">
-                    <button type="button" id="game_reponse_click" name="game_reponse_click"> Valider </button>
-                </div>
+                <!-- DIV GAME -->
+                    <div id="game_interact" class="hidden">
+                        <label for="reponse_game" id="game_reponse_label"></label>
+                        <input type="text" id="reponse_game">
+                        <button type="button" id="game_reponse_click" name="game_reponse_click"> Valider </button>
+                    </div>
+                    <p id="reponse_text" name="reponse_text" class="hidden"></p>
+
         </div>
         <div class="two">
             <ul id="messages">
@@ -49,7 +52,3 @@
         </div>
     </div>
 </div>
-
-
-<!--TEST AREA-->
-
