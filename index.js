@@ -126,23 +126,21 @@ function room_exist(msg) {
 // represente la loop du jeu
 function game(socket_joined,socket) {
     var role = ["sujet", "verbe","complement"]
-    var controle = 0
     var player_role_array = []
     setTimeout(function () {
     io.of('/').in(socket_joined).clients(function(error,client){
             if (error) throw error;
 
             client.forEach(function (user) {
-                io.to(user).emit('game_role',role[controle]);
-                player_role_array.push(new player_role(role[controle],user))
+                var item_place = Math.floor(Math.random()*role.length)
+                var user_role = role[item_place]
+                role.splice(item_place,1)
+                io.to(user).emit('game_role',user_role);
+                player_role_array.push(new player_role(user_role,user))
                 console.log(socket.room_joined);
                 var my_socket = io.of('/').connected[user]
-                my_socket.role = role[controle]
+                my_socket.role = user_role
                 console.log(my_socket.role)
-                controle = controle+1;
-                if (controle > 2){
-                    controle = 0;
-                }
             });
         });
 
