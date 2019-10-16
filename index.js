@@ -53,7 +53,7 @@ io.on('connection', function (socket) {
             socket.room_joined = msg
             io.of('/').in(socket.room_joined).clients(function(error,client){
                 if (error) throw error;
-                if (client.length < 5)
+                if (client.length < 3)
                 {
                     socket.join(msg)
                     console.log("room joined")
@@ -74,7 +74,12 @@ io.on('connection', function (socket) {
     });
 
     socket.on('join_random_room', function () {
-        console.log("bonjour");
+        room_list.forEach(element => {
+            io.of('/').in(element.room_name).clients((error,clients) => {
+                if (error) throw error;
+                console.log(clients.length)
+            });
+        });
     });
 
     socket.on('chat message', function (msg) {

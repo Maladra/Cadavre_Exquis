@@ -42,7 +42,7 @@ $('#validate_room').click(function () {
     join_room()
 });
 
-$('#join_random_room_click').click(function () {
+$('#join_random_room').click(function () {
 socket.emit('join_random_room')
 });
 

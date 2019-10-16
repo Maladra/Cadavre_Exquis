@@ -8,4 +8,4 @@ GERER si une reponse est vide
 
 Faire interface user
 
-
+Emit message when room is full (a gerer coter client et serveur)
