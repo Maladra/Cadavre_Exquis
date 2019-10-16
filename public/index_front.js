@@ -22,10 +22,8 @@ const join_room = function () {
         room_name = $('#choose_room').val();
         alert (room_name)
         socket.emit('join_room', room_name)
-        
         $('#game_room').fadeIn("fast")
     });
-    
 }
 
 const send_reponse_game = function () {
@@ -44,6 +42,10 @@ $('#validate_room').click(function () {
     join_room()
 });
 
+$('#join_random_room_click').click(function () {
+socket.emit('join_random_room')
+});
+
 $('form').submit(function(e){
     e.preventDefault(); // prevents page reloading
     
@@ -54,7 +56,7 @@ $('form').submit(function(e){
 
 socket.on('chat message', function(msg){
     $('#messages').append($('<li>').text(msg));
-  });
+});
 
 socket.on('game_role', function (msg){
 

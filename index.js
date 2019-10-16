@@ -56,8 +56,6 @@ io.on('connection', function (socket) {
                 if (client.length < 5)
                 {
                     socket.join(msg)
-        
-        
                     console.log("room joined")
                 }
                 else {
@@ -69,16 +67,20 @@ io.on('connection', function (socket) {
             socket.join(msg)
             console.log("la salle n'existe pas")
             socket.room_joined = msg
-            room_list.push(new game_room(socket.room_joined, setInterval(game, 30000, socket.room_joined, socket)))
+            room_list.push(new game_room(socket.room_joined, setInterval(game, 20000, socket.room_joined, socket)))
 
         }
         console.log(socket.room_joined)
+    });
 
-        socket.on('chat message', function (msg) {
+    socket.on('join_random_room', function () {
+        console.log("bonjour");
+    });
+
+    socket.on('chat message', function (msg) {
             console.log('message: ' + msg);
             console.log(socket.room_joined)
             io.in(socket.room_joined).emit('chat message', socket.username +" : " + msg);
-        });
     });
 
     socket.on('game_reponse', function (msg) {
@@ -103,8 +105,6 @@ io.on('connection', function (socket) {
         console.log(get_room_joined)
 
     })
-
-
 });
 
 http.listen(3000, function () {
@@ -127,7 +127,7 @@ function room_exist(msg) {
 function game(socket_joined,socket) {
     var role = ["sujet", "verbe","complement"]
     var player_role_array = []
-    setTimeout(function () {
+ 
     io.of('/').in(socket_joined).clients(function(error,client){
             if (error) throw error;
 
@@ -161,7 +161,6 @@ function game(socket_joined,socket) {
                 })
             })
         }, 15000);
-    }, 10000);
 };
 
 class player_role {

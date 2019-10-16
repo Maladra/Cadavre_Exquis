@@ -1,35 +1,11 @@
-(1-5)
+FONCTION join_random_room (BACK et FRONT a finir)
 
-si -3 participants ordinateur occupe un rôle (sujet verbe complement)
+GERER si salle pleine
 
+GERER salle (3,4 ou 5 personnes)
 
-10 secondes par participants
+GERER si une reponse est vide
 
+Faire interface user
 
-
-player1
-player2
-player3
-
-array_player = [player1,player2,player3]
-
-
-AVANT LA PARTIE :
-
-
-DEBUT DE LA PARTIE :
-
-
-MILIEUR DE LA PARTIE :
-
-
-FIN DE LA PARTIE :
-
-
-APRES LA PARTIE : 
-
-SI NOUVELLE CONNEXION:
-
-
-SI DECONNEXION : 
 
