@@ -61,6 +61,7 @@ io.on('connection', function (socket) {
                     console.log("room joined")
                 }
                 else {
+                    socket.emit('error', "Nombre de personne maximum atteint")
                     console.log("salle pleine")
                 }
             });
