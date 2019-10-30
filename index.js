@@ -101,16 +101,22 @@ io.on('connection', function (socket) {
         
         if (socket.role == "complement")
         {
-         get_room_joined.complement = msg
+            get_room_joined.complement = msg
         }
         
-        if (socket.role == "verbe")
-        {
+        if (socket.role == "verbe"){
             get_room_joined.verbe = msg
         }
 
-        console.log(get_room_joined)
+        if (socket.role == "complement_bis"){
+            get_room_joined.complement_bis = msg
+        }
 
+        if (socket.role == "complement_trio") {
+            get_room_joined.complement_trio = msg
+
+        }
+        console.log(get_room_joined)
     })
 });
 
@@ -132,31 +138,27 @@ function room_exist(msg) {
 };
 // represente la loop du jeu
 function game(socket_joined,socket) {
-
     
     if (client.length <= 3) {
         console.log('3')
         var role = ["sujet","verbe", "complement"]
         var quantit_player = client.length
-
     }
     else if (client.length == 4) {
         console.log('4')
-        var role = ['sujet', 'verbe', 'complement', 'complement2']
+        var role = ['sujet', 'verbe', 'complement', 'complement_bis']
         var quantit_player = client.length
     }
     else if (client.length == 5) {
         console.log('5')
-        var role = ["sujet", "verbe", "complement", "complement2", "complement3"]
+        var role = ["sujet", "verbe", "complement", "complement_bis", "complement_trio"]
         var quantit_player = client.length
     }
-
 
     var player_role_array = []
  
     io.of('/').in(socket_joined).clients(function(error,client){
             if (error) throw error;
-
 
             console.log(client.length)
 
@@ -192,12 +194,32 @@ function game(socket_joined,socket) {
 
                 }
                 else if (quantit_player == 4) {
+                    client.forEach(function(user) {
+                        io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement + " " + get_room_joined.complement_bis)
+                        delete get_room_joined.sujet
+                        delete get_room_joined.verbe
+                        delete get_room_joined.complement
+                        delete get_room_joined.complement_bis
+
+                        var user_get_response = player_role_array.find(r => r.id == user)
+                        console.log(user_get_response)
+                    })
 
                 }
                 else if (quantit_player == 5) {
+                    client.forEach(function(user) {
+                        io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement + " " + get_room_joined.complement_bis + " " + get_room_joined.complement_trio)
+                        delete get_room_joined.sujet
+                        delete get_room_joined.verbe
+                        delete get_room_joined.complement
+                        delete get_room_joined.complement_bis
+                        delete get_room_joined.complement_trio
 
+                        var user_get_response = player_role_array.find(r => r.id == user)
+                        console.log(user_get_response)
+                    
+                    })
                 }
-                
             })
         }, 15000);
 };
