@@ -77,12 +77,22 @@ io.on('connection', function (socket) {
     });
 
     socket.on('join_random_room', function () {
-        room_list.forEach(element => {
-            io.of('/').in(element.room_name).clients((error,clients) => {
-                if (error) throw error;
-                console.log(clients.length)
-            });
-        });
+        if (room_list === undefined || room_list.length == 0)
+        {
+            socket.emit("error", "Aucune salle existante")
+        }
+        else {
+           room_list.forEach(element => {
+               io.of('/').in(element.room_name).clients((error,clients) => {
+                   if (error) throw error;
+                   console.log(clients.length)
+                   if (client.length < 5)
+                {
+                    socket.join(element.room_name)
+                   }
+               });
+           });
+        }
     });
 
     socket.on('chat message', function (msg) {
