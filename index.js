@@ -53,6 +53,8 @@ io.on('connection', function (socket) {
             socket.room_joined = msg
             io.of('/').in(socket.room_joined).clients(function(error,client){
                 if (error) throw error;
+
+                // terme remplacer par 5
                 if (client.length < 3)
                 {
                     socket.join(msg)
@@ -135,6 +137,13 @@ function game(socket_joined,socket) {
  
     io.of('/').in(socket_joined).clients(function(error,client){
             if (error) throw error;
+
+
+            console.log(client.length)
+            if (client.length)
+            {
+
+            }
 
             client.forEach(function (user) {
                 var item_place = Math.floor(Math.random()*role.length)
