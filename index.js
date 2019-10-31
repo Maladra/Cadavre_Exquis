@@ -133,8 +133,6 @@ io.on('connection', function (socket) {
                 get_room_joined.complement_trio = msg
                 break;
         }
-
-
         //if (socket.role == "sujet"){
         //    get_room_joined.sujet = msg
         //}
