@@ -79,6 +79,7 @@ io.on('connection', function (socket) {
         console.log(socket.room_joined)
     });
 
+    // join random room 
     socket.on('join_random_room', function () {
         if (room_list === undefined || room_list.length == 0)
         {
@@ -104,12 +105,14 @@ io.on('connection', function (socket) {
         }
     });
 
+    // on message chat
     socket.on('chat message', function (msg) {
             console.log('message: ' + msg);
             console.log(socket.room_joined)
             io.in(socket.room_joined).emit('chat message', socket.username +" : " + msg);
     });
 
+    // send the response of game
     socket.on('game_reponse', function (msg) {
         console.log(msg)
         console.log(socket.role)
@@ -179,7 +182,6 @@ function room_exist(msg) {
 function game(socket_joined,socket) {
     var quantit_player;
     var player_role_array = []
-
 
     io.of('/').in(socket_joined).clients(function(error, client){
         if (error) throw error;
