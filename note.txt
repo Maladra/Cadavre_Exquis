@@ -2,8 +2,6 @@ FONCTION join_random_room (BACK et FRONT a finir)
 
 GERER si salle pleine
 
-GERER salle (3,4 ou 5 personnes)
-
 GERER si une reponse est vide
 
 Faire interface user
