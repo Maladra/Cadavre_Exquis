@@ -42,8 +42,9 @@ $('#validate_room').click(function () {
     join_room()
 });
 
-$('#join_random_room_click').click(function () {
-socket.emit('join_random_room')
+$('#random_room_button').click(function () {
+    alert("aaa")
+    socket.emit('join_random_room')
 });
 
 $('form').submit(function(e){
@@ -73,6 +74,12 @@ socket.on('game_response', function (msg) {
         $('#reponse_text').fadeIn("fast")
     });
 })
+
+
+socket.on('error_perso', function(msg) {
+    alert(msg)
+})
+
 
 $('#game_reponse_click').click(function () {
     send_reponse_game()

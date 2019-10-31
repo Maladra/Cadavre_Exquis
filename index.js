@@ -20,16 +20,22 @@ io.on('connection', function (socket) {
     // on socket disconnect
     socket.on('disconnect', function () {
         console.log('user disconnected')
+
+        // si l'utilisateur est dans une room
         if (typeof(socket.room_joined) == 'string') {
             var room_leaved = room_list.find(r => r.room_name == socket.room_joined)
             io.of('/').in(socket.room_joined).clients(function(error,client){
                 if (error) throw error;
+
+                // si il y'a 0 client ou moins dans une salle on arrête la loop game
                 if (client.length <= 0)
                 {
                     console.log("client inférieur a 0")
                     console.log(socket.role)
                     clearInterval(room_leaved.loop_game)
                     console.log(room_list.length)
+
+                    // iteration sur la liste des rooms et la retire si elle est vide (check a chaque deconnexion)
                     for (var i = 0; i < room_list.length; i++){
                         console.log(i)
                         if (room_list[i].room_name == room_leaved.room_name){
@@ -45,14 +51,13 @@ io.on('connection', function (socket) {
     });
 
     // on user join a room
-    // set socket.room_joined
     socket.on('join_room', function (msg) {
         if(room_exist(msg)){
             console.log("la salle existe deja")
             socket.room_joined = msg
             io.of('/').in(socket.room_joined).clients(function(error,client){
                 if (error) throw error;
-
+                // max client par salle
                 if (client.length < 5)
                 {
                     socket.join(msg)
@@ -78,16 +83,22 @@ io.on('connection', function (socket) {
         if (room_list === undefined || room_list.length == 0)
         {
             socket.emit("error_perso", "Aucune salle existante")
+            console.log("Aucune salle existante")
         }
         else {
+            // TODO : TERMINER la fonction si aucune salle n'a moins de 5 personnes
            room_list.forEach(element => {
                io.of('/').in(element.room_name).clients((error,clients) => {
                    if (error) throw error;
                    console.log(clients.length)
-                   if (client.length < 5)
-                {
-                    socket.join(element.room_name)
-                   }
+                   if (client.length < 5){
+                        socket.join(element.room_name)
+                        console.log(element.room_name)
+                    }
+                    // 
+                    else {
+                        
+                    }
                });
            });
         }
@@ -104,27 +115,47 @@ io.on('connection', function (socket) {
         console.log(socket.role)
         console.log(socket.room_joined)
         var get_room_joined = room_list.find(r => r.room_name == socket.room_joined)
-        if (socket.role == "sujet"){
-            get_room_joined.sujet = msg
-        }
         
-        if (socket.role == "complement")
-        {
-            get_room_joined.complement = msg
-        }
-        
-        if (socket.role == "verbe"){
-            get_room_joined.verbe = msg
+        switch(socket.role) {
+            case 'sujet':
+                get_room_joined.sujet = msg
+                break;
+            case 'complement':
+                get_room_joined.complement = msg
+                break;
+            case 'verbe':
+                get_room_joined.verbe = msg
+                break;
+            case 'complement_bis':
+                get_room_joined.complement_bis = msg
+                break;
+            case 'complement_trio':
+                get_room_joined.complement_trio = msg
+                break;
         }
 
-        if (socket.role == "complement_bis"){
-            get_room_joined.complement_bis = msg
-        }
 
-        if (socket.role == "complement_trio") {
-            get_room_joined.complement_trio = msg
-
-        }
+        //if (socket.role == "sujet"){
+        //    get_room_joined.sujet = msg
+        //}
+        //
+        //else if (socket.role == "complement")
+        //{
+        //    get_room_joined.complement = msg
+        //}
+        //
+        //else if (socket.role == "verbe"){
+        //    get_room_joined.verbe = msg
+        //}
+        //
+        //else if (socket.role == "complement_bis"){
+        //    get_room_joined.complement_bis = msg
+        //}
+        //
+        //else if (socket.role == "complement_trio") {
+        //    get_room_joined.complement_trio = msg
+        //
+        //}
         console.log(get_room_joined)
     })
 });
@@ -173,15 +204,16 @@ function game(socket_joined,socket) {
         console.log(client.length)
 
             client.forEach(function (user) {
-            var item_place = Math.floor(Math.random()*role.length)
-            var user_role = role[item_place]
-            role.splice(item_place,1)
-            io.to(user).emit('game_role',user_role);
-            player_role_array.push(new player_role(user_role,user))
-            console.log(socket.room_joined);
-            var my_socket = io.of('/').connected[user]
-            my_socket.role = user_role
-            console.log(my_socket.role)
+                // assignation rôle a une socket utilisateur
+                var item_place = Math.floor(Math.random()*role.length)
+                var user_role = role[item_place]
+                role.splice(item_place,1)
+                io.to(user).emit('game_role',user_role);
+                player_role_array.push(new player_role(user_role,user))
+                console.log(socket.room_joined);
+                var my_socket = io.of('/').connected[user]
+                my_socket.role = user_role
+                console.log(my_socket.role)
         });
     })
         setTimeout(function () {
@@ -199,8 +231,6 @@ function game(socket_joined,socket) {
                     delete get_room_joined.complement
                     var user_get_response = player_role_array.find(r => r.id == user)
                     console.log(user_get_response)
-            
-
                 }
                 else if (quantit_player == 4) {
                     client.forEach(function(user) {
