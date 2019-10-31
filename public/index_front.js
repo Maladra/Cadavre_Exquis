@@ -45,7 +45,6 @@ $('#validate_room').click(function () {
 
 // event join random room
 $('#random_room_button').click(function () {
-    alert("aaa")
     socket.emit('join_random_room')
 });
 
