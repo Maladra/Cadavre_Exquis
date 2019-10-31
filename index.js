@@ -164,8 +164,9 @@ http.listen(3000, function () {
 
 // Test l'existence de la room
 function room_exist(msg) {
+    // permet d'avoir la liste des rooms
     var existe = false
-    for (let key in io.sockets.adapter.rooms) // permet d'avoir la liste des rooms
+    for (let key in io.sockets.adapter.rooms)
     {
         if(msg == key){
             existe = true;
@@ -200,9 +201,8 @@ function game(socket_joined,socket) {
         }
 
         console.log(client.length)
-
+            // assignation rôle a une socket utilisateur
             client.forEach(function (user) {
-                // assignation rôle a une socket utilisateur
                 var item_place = Math.floor(Math.random()*role.length)
                 var user_role = role[item_place]
                 role.splice(item_place,1)
