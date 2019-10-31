@@ -26,6 +26,7 @@ const join_room = function () {
     });
 }
 
+// function for send reponse for game to server
 const send_reponse_game = function () {
     reponse = $('#reponse_game').val();
     socket.emit('game_reponse', reponse)
@@ -42,11 +43,13 @@ $('#validate_room').click(function () {
     join_room()
 });
 
+// event join random room
 $('#random_room_button').click(function () {
     alert("aaa")
     socket.emit('join_random_room')
 });
 
+// form submit (for tchat)
 $('form').submit(function(e){
     e.preventDefault(); // prevents page reloading
     
@@ -55,10 +58,12 @@ $('form').submit(function(e){
     return false;
 });
 
+// append the tchat with message
 socket.on('chat message', function(msg){
     $('#messages').append($('<li>').text(msg));
 });
 
+// recoit et affiche le role de la personne
 socket.on('game_role', function (msg){
 
     $('#wait_game').fadeOut("fast", function () {
@@ -68,6 +73,7 @@ socket.on('game_role', function (msg){
     });
 })
 
+// recoit la reponse et l'affiche
 socket.on('game_response', function (msg) {
     $("#game_interact").fadeOut("fast", function () {
         $('#reponse_text').text(msg);
@@ -75,12 +81,12 @@ socket.on('game_response', function (msg) {
     });
 })
 
-
+// gestion erreur perso
 socket.on('error_perso', function(msg) {
     alert(msg)
 })
 
-
+// button for sending reponse game
 $('#game_reponse_click').click(function () {
     send_reponse_game()
 })
