@@ -123,8 +123,8 @@ io.on('connection', function (socket) {
             case 'verbe':
                 get_room_joined.verbe = msg
                 break;
-            case 'complement_bis':
-                get_room_joined.complement_bis = msg
+            case 'adjectif':
+                get_room_joined.adjectif = msg
                 break;
             case 'complement_trio':
                 get_room_joined.complement_trio = msg
@@ -168,12 +168,12 @@ function game(socket_joined,socket) {
                 break;
             case client.length == 4:
                 console.log('4')
-                var role = ['sujet', 'verbe', 'complement', 'complement_bis']
+                var role = ['sujet', 'verbe', 'complement', 'adjectif']
                 quantit_player = client.length
                 break;
             case client.length == 5:
                 console.log('5')
-                var role = ["sujet", "verbe", "complement", "complement_bis", "complement_trio"]
+                var role = ["sujet", "verbe", "complement", "adjectif", "complement_trio"]
                 quantit_player = client.length
                 break;
         }
@@ -209,27 +209,27 @@ function game(socket_joined,socket) {
                 }
                 else if (quantit_player == 4) {
                     client.forEach(function(user) {
-                        io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement + " " + get_room_joined.complement_bis)
+                        io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement + " " + get_room_joined.adjectif)
                         var user_get_response = player_role_array.find(r => r.id == user)
                         console.log(user_get_response)
                     })
                     delete get_room_joined.sujet
                     delete get_room_joined.verbe
                     delete get_room_joined.complement
-                    delete get_room_joined.complement_bis
+                    delete get_room_joined.adjectif
 
                 }
 
                 else if (quantit_player == 5) {
                     client.forEach(function(user) {
-                        io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement + " " + get_room_joined.complement_bis + " " + get_room_joined.complement_trio)
+                        io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement + " " + get_room_joined.adjectif + " " + get_room_joined.complement_trio)
                         var user_get_response = player_role_array.find(r => r.id == user)
                         console.log(user_get_response)
                     })
                     delete get_room_joined.sujet
                     delete get_room_joined.verbe
                     delete get_room_joined.complement
-                    delete get_room_joined.complement_bis
+                    delete get_room_joined.adjectif
                     delete get_room_joined.complement_trio
 
                 }
