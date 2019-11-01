@@ -9,7 +9,9 @@
     "jquery-ui": "^1.12.1",
     "socket.io": "^2.2.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "tailwindcss": "^1.1.3"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
