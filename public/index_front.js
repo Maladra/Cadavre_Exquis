@@ -7,14 +7,6 @@ $(function () {
 var socket = io(); // initialise socket
 var username; // username for the socket
 
-
-// function for send reponse for game to server
-const send_reponse_game = function () {
-    reponse = $('#reponse_game').val();
-    socket.emit('game_reponse', reponse)
-    
-}
-
 // event send username on server
 $('#set_username').click(function () {
     username = $('#username').val();
@@ -37,8 +29,7 @@ $('#set_room').click(function () {
 socket.on('room_validate', function () {
     $('#join_select_room').fadeOut("fast", function (){
         $('#game_room').fadeIn("fast")
-    });
-    
+    });  
 })
 
 // event join random room
@@ -62,11 +53,12 @@ socket.on('chat message', function(msg){
 
 // recoit et affiche le role de la personne
 socket.on('game_role', function (msg){
-
     $('#wait_game').fadeOut("fast", function () {
-        $('#reponse_text').fadeOut("fast")
-        $('#game_reponse_label').text(msg +" :")
-        $('#game_interact').fadeIn("fast")
+        $('#reponse_text').fadeOut("fast", function () {
+            $('#game_reponse_label').text(msg +" :")
+            $('#game_interact').fadeIn("fast")
+        });
+        
     });
 })
 
@@ -85,6 +77,12 @@ socket.on('error_perso', function(msg) {
 
 // button for sending reponse game
 $('#game_reponse_click').click(function () {
-    send_reponse_game()
+    reponse = $('#reponse_game').val();
+    socket.emit('game_reponse', reponse)
 })
+socket.on('reponse_game_validate', function () {
+    $("#game_interact").fadeOut("fast");
+})
+
+
 });

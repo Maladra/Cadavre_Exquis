@@ -130,6 +130,7 @@ io.on('connection', function (socket) {
                 get_room_joined.complement_trio = msg
                 break;
         }
+        socket.emit('reponse_game_validate')
         console.log(get_room_joined)
     })
 });
@@ -159,7 +160,7 @@ function game(socket_joined,socket) {
     io.of('/').in(socket_joined).clients(function(error, client){
         if (error) throw error;
 
-        switch(client.length) {
+        switch(true) {
             case client.length <= 3:
                 console.log('3')
                 var role = ["sujet","verbe", "complement"]
@@ -198,36 +199,39 @@ function game(socket_joined,socket) {
                 if (quantit_player <= 3) {
                     client.forEach(function(user) {
                         io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement)
+                        var user_get_response = player_role_array.find(r => r.id == user)
+                        console.log(user_get_response)
                     })
                     delete get_room_joined.sujet
                     delete get_room_joined.verbe
                     delete get_room_joined.complement
-                    var user_get_response = player_role_array.find(r => r.id == user)
-                    console.log(user_get_response)
+
                 }
                 else if (quantit_player == 4) {
                     client.forEach(function(user) {
                         io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement + " " + get_room_joined.complement_bis)
+                        var user_get_response = player_role_array.find(r => r.id == user)
+                        console.log(user_get_response)
                     })
                     delete get_room_joined.sujet
                     delete get_room_joined.verbe
                     delete get_room_joined.complement
                     delete get_room_joined.complement_bis
-                    var user_get_response = player_role_array.find(r => r.id == user)
-                    console.log(user_get_response)
+
                 }
 
                 else if (quantit_player == 5) {
                     client.forEach(function(user) {
                         io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement + " " + get_room_joined.complement_bis + " " + get_room_joined.complement_trio)
+                        var user_get_response = player_role_array.find(r => r.id == user)
+                        console.log(user_get_response)
                     })
                     delete get_room_joined.sujet
                     delete get_room_joined.verbe
                     delete get_room_joined.complement
                     delete get_room_joined.complement_bis
                     delete get_room_joined.complement_trio
-                    var user_get_response = player_role_array.find(r => r.id == user)
-                    console.log(user_get_response)
+
                 }
             })
         }, 15000);
