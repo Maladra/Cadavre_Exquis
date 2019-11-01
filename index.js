@@ -15,6 +15,7 @@ io.on('connection', function (socket) {
     socket.on('set_username',function (msg) {
         socket.username = msg;
         console.log(socket.username)
+        socket.emit('username_validate')
     });
 
     // on socket disconnect
@@ -30,18 +31,12 @@ io.on('connection', function (socket) {
                 // si il y'a 0 client ou moins dans une salle on arrête la loop game
                 if (client.length <= 0)
                 {
-                    console.log("client inférieur a 0")
-                    console.log(socket.role)
                     clearInterval(room_leaved.loop_game)
-                    console.log(room_list.length)
 
                     // iteration sur la liste des rooms et la retire si elle est vide (check a chaque deconnexion)
                     for (var i = 0; i < room_list.length; i++){
-                        console.log(i)
                         if (room_list[i].room_name == room_leaved.room_name){
-                            console.log(typeof(room_list[i].room_name))
                             room_list.splice(0,1)
-                            console.log(room_list)
                         }
                     }
                 }
@@ -53,7 +48,6 @@ io.on('connection', function (socket) {
     // on user join a room
     socket.on('join_room', function (msg) {
         if(room_exist(msg)){
-            console.log("la salle existe deja")
             socket.room_joined = msg
             io.of('/').in(socket.room_joined).clients(function(error,client){
                 if (error) throw error;
@@ -61,11 +55,10 @@ io.on('connection', function (socket) {
                 if (client.length < 5)
                 {
                     socket.join(msg)
-                    console.log("room joined")
+                    socket.emit('room_validate')
                 }
                 else {
                     socket.emit('error_perso', "Nombre de personne maximum atteint")
-                    console.log("salle pleine")
                 }
             });
         }
@@ -74,6 +67,7 @@ io.on('connection', function (socket) {
             console.log("la salle n'existe pas")
             socket.room_joined = msg
             room_list.push(new game_room(socket.room_joined, setInterval(game, 20000, socket.room_joined, socket)))
+            socket.emit('room_validate')
 
         }
         console.log(socket.room_joined)
@@ -87,21 +81,24 @@ io.on('connection', function (socket) {
             console.log("Aucune salle existante")
         }
         else {
-            // TODO : TERMINER la fonction si aucune salle n'a moins de 5 personnes
+            var room_list_counter = 0
            room_list.forEach(element => {
+               room_list_counter++
                io.of('/').in(element.room_name).clients((error,clients) => {
                    if (error) throw error;
                    console.log(clients.length)
                    if (client.length < 5){
                         socket.join(element.room_name)
                         console.log(element.room_name)
-                    }
-                    // 
-                    else {
+                        socket.emit('room_validate')
                         
                     }
+                    // 
+                    else if (room_list_counter >= room_list.length) {
+                        socket.emit("error_perso", "Toutes les salles sont pleines")
+                    }
                });
-           });
+            });
         }
     });
 
@@ -114,9 +111,6 @@ io.on('connection', function (socket) {
 
     // send the response of game
     socket.on('game_reponse', function (msg) {
-        console.log(msg)
-        console.log(socket.role)
-        console.log(socket.room_joined)
         var get_room_joined = room_list.find(r => r.room_name == socket.room_joined)
         
         switch(socket.role) {
@@ -136,27 +130,6 @@ io.on('connection', function (socket) {
                 get_room_joined.complement_trio = msg
                 break;
         }
-        //if (socket.role == "sujet"){
-        //    get_room_joined.sujet = msg
-        //}
-        //
-        //else if (socket.role == "complement")
-        //{
-        //    get_room_joined.complement = msg
-        //}
-        //
-        //else if (socket.role == "verbe"){
-        //    get_room_joined.verbe = msg
-        //}
-        //
-        //else if (socket.role == "complement_bis"){
-        //    get_room_joined.complement_bis = msg
-        //}
-        //
-        //else if (socket.role == "complement_trio") {
-        //    get_room_joined.complement_trio = msg
-        //
-        //}
         console.log(get_room_joined)
     })
 });
@@ -186,34 +159,34 @@ function game(socket_joined,socket) {
     io.of('/').in(socket_joined).clients(function(error, client){
         if (error) throw error;
 
-        if (client.length <= 3) {
-            console.log('3')
-            var role = ["sujet","verbe", "complement"]
-            quantit_player = client.length
+        switch(client.length) {
+            case client.length <= 3:
+                console.log('3')
+                var role = ["sujet","verbe", "complement"]
+                quantit_player = client.length
+                break;
+            case client.length == 4:
+                console.log('4')
+                var role = ['sujet', 'verbe', 'complement', 'complement_bis']
+                quantit_player = client.length
+                break;
+            case client.length == 5:
+                console.log('5')
+                var role = ["sujet", "verbe", "complement", "complement_bis", "complement_trio"]
+                quantit_player = client.length
+                break;
         }
-        else if (client.length == 4) {
-            console.log('4')
-            var role = ['sujet', 'verbe', 'complement', 'complement_bis']
-            quantit_player = client.length
-        }
-        else if (client.length == 5) {
-            console.log('5')
-            var role = ["sujet", "verbe", "complement", "complement_bis", "complement_trio"]
-            quantit_player = client.length
-        }
-
+        
         console.log(client.length)
             // assignation rôle a une socket utilisateur
             client.forEach(function (user) {
                 var item_place = Math.floor(Math.random()*role.length)
                 var user_role = role[item_place]
+                var my_socket = io.of('/').connected[user]
                 role.splice(item_place,1)
                 io.to(user).emit('game_role',user_role);
                 player_role_array.push(new player_role(user_role,user))
-                console.log(socket.room_joined);
-                var my_socket = io.of('/').connected[user]
                 my_socket.role = user_role
-                console.log(my_socket.role)
         });
     })
         setTimeout(function () {

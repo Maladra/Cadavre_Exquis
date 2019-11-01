@@ -7,24 +7,6 @@ $(function () {
 var socket = io(); // initialise socket
 var username; // username for the socket
 
-// function for send username to server 
-const send_username = function () {
-    $('#select_username').fadeOut("fast", function (){
-        $('#join_select_room').fadeIn("fast")
-    });
-    username = $('#username').val();
-    socket.emit('set_username', username)
-}
-
-// function for join or create room 
-const join_room = function () {
-    $('#join_select_room').fadeOut("fast", function (){
-        room_name = $('#choose_room').val();
-        alert (room_name)
-        socket.emit('join_room', room_name)
-        $('#game_room').fadeIn("fast")
-    });
-}
 
 // function for send reponse for game to server
 const send_reponse_game = function () {
@@ -33,15 +15,31 @@ const send_reponse_game = function () {
     
 }
 
-// event send username on server display the room selector
-$('#validate_username').click(function () {
-    send_username()
+// event send username on server
+$('#set_username').click(function () {
+    username = $('#username').val();
+    socket.emit('set_username', username)
 });
+// display room selector if server validate the username
+socket.on('username_validate', function () {
+    $('#select_username').fadeOut("fast", function (){
+        $('#join_select_room').fadeIn("fast")
+    });
+    
+})
 
 // event send create/join socket on server and display game room
-$('#validate_room').click(function () {
-    join_room()
+$('#set_room').click(function () {
+    room_name = $('#choose_room').val()
+    socket.emit('join_room',room_name)
 });
+
+socket.on('room_validate', function () {
+    $('#join_select_room').fadeOut("fast", function (){
+        $('#game_room').fadeIn("fast")
+    });
+    
+})
 
 // event join random room
 $('#random_room_button').click(function () {
