@@ -156,37 +156,9 @@ function room_exist(msg) {
 };
 // represente la loop du jeu
 function game(socket_joined,socket) {
-<<<<<<< HEAD
-
-    
-    if (client.length <= 3) {
-        console.log('3')
-        var role = ["sujet","verbe", "complement"]
-        var quantit_player = client.length
-
-    }
-    else if (client.length == 4) {
-        console.log('4')
-        var role = ['sujet', 'verbe', 'complement', 'complement2']
-        var quantit_player = client.length
-    }
-    else if (client.length == 5) {
-        console.log('5')
-        var role = ["sujet", "verbe", "complement", "complement2", "complement3"]
-        var quantit_player = client.length
-    }
-
-
-=======
     var quantit_player;
->>>>>>> testing
     var player_role_array = []
 
-<<<<<<< HEAD
-
-            console.log(client.length)
-
-=======
     io.of('/').in(socket_joined).clients(function(error, client){
         if (error) throw error;
 
@@ -210,7 +182,6 @@ function game(socket_joined,socket) {
         
         console.log(client.length)
             // assignation rôle a une socket utilisateur
->>>>>>> testing
             client.forEach(function (user) {
                 var item_place = Math.floor(Math.random()*role.length)
                 var user_role = role[item_place]
@@ -228,25 +199,11 @@ function game(socket_joined,socket) {
                 if (error) throw error;
 
                 if (quantit_player <= 3) {
-<<<<<<< HEAD
-
-                }
-                else if (quantit_player == 4) {
-
-                }
-                else if (quantit_player == 5) {
-
-                }
-                
-                client.forEach(function (user) {
-                    io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + " " + get_room_joined.complement)
-=======
                     client.forEach(function(user) {
                         io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement)
                         var user_get_response = player_role_array.find(r => r.id == user)
                         console.log(user_get_response)
                     })
->>>>>>> testing
                     delete get_room_joined.sujet
                     delete get_room_joined.verbe
                     delete get_room_joined.complement
