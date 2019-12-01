@@ -52,7 +52,7 @@ io.on('connection', function (socket) {
             io.of('/').in(socket.room_joined).clients(function(error,client){
                 if (error) throw error;
 
-                // terme remplacer par 5
+
                 if (client.length < 5)
                 {
                     socket.join(msg)
