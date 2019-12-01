@@ -6,6 +6,8 @@ const { player_role, game_room } = require('./class_file')
 const { disconnect_function } = require('./disconnect_function')
 const { join_room_function } = require ('./join_room_function')
 const { join_random_room_function } = require ('./join_random_room_function')
+const { room_exist } = require ('./room_exist_function')
+
 global.room_list = []
 
 app.use(express.static(__dirname + "/public"));
@@ -29,7 +31,7 @@ io.on('connection', function (socket) {
 
     // on user join a room
     socket.on('join_room', function (msg) {
-        if(room_exist(msg)){
+        if(room_exist(msg, io)){
             socket.room_joined = msg
             join_room_function(io, socket, msg)
         }
@@ -39,7 +41,6 @@ io.on('connection', function (socket) {
             socket.room_joined = msg
             room_list.push(new game_room(socket.room_joined, setInterval(game, 20000, socket.room_joined, socket)))
             socket.emit('room_validate')
-
         }
     });
 
@@ -80,8 +81,8 @@ io.on('connection', function (socket) {
             case 'adjectif':
                 get_room_joined.adjectif = msg
                 break;
-            case 'complement_trio':
-                get_room_joined.complement_trio = msg
+            case 'adjectif_bis':
+                get_room_joined.adjectif_bis = msg
                 break;
         }
         socket.emit('reponse_game_validate')
@@ -93,20 +94,7 @@ http.listen(3000, function () {
     console.log('listening on *:3000');
 });
 
-// Test l'existence de la room
-function room_exist(msg) {
-    // permet d'avoir la liste des rooms
-    var existe = false
-    for (let key in io.sockets.adapter.rooms)
-    {
-        if(msg == key){
-            existe = true;
-            break;
-        }
-    }
-    return existe;
-};
-// represente la loop du jeu
+
 function game(socket_joined,socket) {
     var quantit_player;
     var player_role_array = []
@@ -127,7 +115,7 @@ function game(socket_joined,socket) {
                 break;
             case client.length == 5:
                 console.log('5')
-                var role = ["sujet", "verbe", "complement", "adjectif", "complement_trio"]
+                var role = ["sujet", "verbe", "complement", "adjectif", "adjectif_bis"]
                 quantit_player = client.length
                 break;
         }
@@ -159,7 +147,6 @@ function game(socket_joined,socket) {
                     delete get_room_joined.sujet
                     delete get_room_joined.verbe
                     delete get_room_joined.complement
-
                 }
                 else if (quantit_player == 4) {
                     client.forEach(function(user) {
@@ -173,10 +160,9 @@ function game(socket_joined,socket) {
                     delete get_room_joined.adjectif
 
                 }
-
                 else if (quantit_player == 5) {
                     client.forEach(function(user) {
-                        io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement + " " + get_room_joined.adjectif + " " + get_room_joined.complement_trio)
+                        io.to(user).emit('game_response', get_room_joined.sujet + " " + get_room_joined.verbe + " " + get_room_joined.complement + " " + get_room_joined.adjectif + " " + get_room_joined.adjectif_bis)
                         var user_get_response = player_role_array.find(r => r.id == user)
                         console.log(user_get_response)
                     })
@@ -184,13 +170,8 @@ function game(socket_joined,socket) {
                     delete get_room_joined.verbe
                     delete get_room_joined.complement
                     delete get_room_joined.adjectif
-                    delete get_room_joined.complement_trio
-
+                    delete get_room_joined.adjectif_bis
                 }
             })
         }, 15000);
 };
-
-
-
-
