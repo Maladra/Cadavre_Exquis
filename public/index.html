@@ -1,36 +1,46 @@
 <head></head>
 <link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="./index_front.js"></script>
+<script src="semantic/dist/semantic.min.js"></script>
 
 <body>
+    <div id="title" class="sixteen wide column">
     <h1>Welcome</h1>
+</div>
 
     <!--DIV select username-->
-    <div id="select_username" class="hidden">
+    <div id="select_username" class="hidden sixteen wide column">
         <label for="username">
             Choose your Username :
         </label>
         <input type="text" id="username" required>
-        <button type="button" id="validate_username" name="validate_username"> Valider </button>
+        <button class="ui secondary button" type="button" id="set_username" name="set_username"> Valider </button>
     </div>
+<!-- ############################################################ -->
     
     <!-- Select or join room-->
-    <div id="join_select_room" class="hidden">
-        <label for="choose_room">
+    <div id="join_select_room" class="hidden sixteen wide column">
+        <label for="choose_room_input">
             Choose your room name for join or create :
         </label>
-        <input type="text" id="choose_room" required>
-        <button type="button" id="validate_room" name="validate_room"> Valider </button>
+        <input type="text" id="choose_room_input" name="choose_room_input" required>
+        <button type="button" id="set_room" name="set_room"> Valider </button>
         </br>
+<<<<<<< HEAD
         <button type="button" id="join_random_room" name="join_random_room">Join a random room !</button>
+=======
+        <button type="button" id="random_room_button">Join a random room !</button>
+>>>>>>> testing
     </div>
+<!-- ############################################################ -->
 
 <!-- DIV game room -->
 <div id="game_room" class="hidden">
-    <div class="wrapper">
-        <div class="one">
+    <div class="ui grid">
+        <div id="game_container" class="ten wide column">
             <h1>BLABLABLA</h1>
 
             <div id="wait_game"><h3>EN ATTENTE DE LA PROCHAINE PARTIE</h3></div>
@@ -42,9 +52,11 @@
                         <button type="button" id="game_reponse_click" name="game_reponse_click"> Valider </button>
                     </div>
                     <p id="reponse_text" name="reponse_text" class="hidden"></p>
-
         </div>
-        <div class="two">
+
+
+
+        <div id="tchat_container" class="six wide column">
             <div id="message_zone">
                 <ul id="messages">
                 </ul>

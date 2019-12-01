@@ -2,9 +2,6 @@ div.hidden{
     display: none
 }
 
-body {
-    font: 13px Helvetica, Arial; 
-}
 
 * {
     margin: 0;
@@ -59,4 +56,45 @@ form button{
 .two {
     grid-column: 2/2;
     grid-row: 1;
+}
+
+
+#title {
+    text-align: center;
+}
+
+#select_username {
+    padding: 2%;
+    margin-right: 25%;
+    margin-left: 25%;
+    margin-top: 10%;
+    min-width: 50%;
+    border: solid;
+    text-align: center;
+}
+#username {
+    max-width: 100%;
+}
+
+
+#join_select_room {
+    padding: 2%;
+    margin-right: 25%;
+    margin-left: 25%;
+    margin-top: 10%;
+    min-width: 50%;
+    border: solid;
+    text-align: center;
+}
+
+#choose_room_input {
+    max-width: 100%;
+}
+
+#game_container {
+    border: solid;
+}
+
+#tchat_container {
+    border: solid;
 }
