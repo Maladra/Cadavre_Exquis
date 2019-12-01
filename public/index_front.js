@@ -22,8 +22,9 @@ socket.on('username_validate', function () {
 
 // event send create/join socket on server and display game room
 $('#set_room').click(function () {
-    room_name = $('#choose_room').val()
+    room_name = $('#choose_room_input').val()
     socket.emit('join_room',room_name)
+
 });
 
 socket.on('room_validate', function () {

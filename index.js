@@ -2,8 +2,11 @@ var express = require('express')
 var app = express()
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
-
-var room_list = [];
+const { player_role, game_room } = require('./class_file')
+const { disconnect_function } = require('./disconnect_function')
+const { join_room_function } = require ('./join_room_function')
+const { join_random_room_function } = require ('./join_random_room_function')
+global.room_list = []
 
 app.use(express.static(__dirname + "/public"));
 
@@ -14,53 +17,21 @@ io.on('connection', function (socket) {
     // get username for socket
     socket.on('set_username',function (msg) {
         socket.username = msg;
-        console.log(socket.username)
         socket.emit('username_validate')
     });
 
     // on socket disconnect
     socket.on('disconnect', function () {
         console.log('user disconnected')
+        disconnect_function(socket, room_list, io)
 
-        // si l'utilisateur est dans une room
-        if (typeof(socket.room_joined) == 'string') {
-            var room_leaved = room_list.find(r => r.room_name == socket.room_joined)
-            io.of('/').in(socket.room_joined).clients(function(error,client){
-                if (error) throw error;
-
-                // si il y'a 0 client ou moins dans une salle on arrête la loop game
-                if (client.length <= 0)
-                {
-                    clearInterval(room_leaved.loop_game)
-
-                    // iteration sur la liste des rooms et la retire si elle est vide (check a chaque deconnexion)
-                    for (var i = 0; i < room_list.length; i++){
-                        if (room_list[i].room_name == room_leaved.room_name){
-                            room_list.splice(0,1)
-                        }
-                    }
-                }
-            });
-
-        }
     });
 
     // on user join a room
     socket.on('join_room', function (msg) {
         if(room_exist(msg)){
             socket.room_joined = msg
-            io.of('/').in(socket.room_joined).clients(function(error,client){
-                if (error) throw error;
-                // max client par salle
-                if (client.length < 5)
-                {
-                    socket.join(msg)
-                    socket.emit('room_validate')
-                }
-                else {
-                    socket.emit('error_perso', "Nombre de personne maximum atteint")
-                }
-            });
+            join_room_function(io, socket, msg)
         }
         else{
             socket.join(msg)
@@ -70,7 +41,6 @@ io.on('connection', function (socket) {
             socket.emit('room_validate')
 
         }
-        console.log(socket.room_joined)
     });
 
     // join random room 
@@ -81,24 +51,8 @@ io.on('connection', function (socket) {
             console.log("Aucune salle existante")
         }
         else {
-            var room_list_counter = 0
-           room_list.forEach(element => {
-               room_list_counter++
-               io.of('/').in(element.room_name).clients((error,clients) => {
-                   if (error) throw error;
-                   console.log(clients.length)
-                   if (client.length < 5){
-                        socket.join(element.room_name)
-                        console.log(element.room_name)
-                        socket.emit('room_validate')
-                        
-                    }
-                    // 
-                    else if (room_list_counter >= room_list.length) {
-                        socket.emit("error_perso", "Toutes les salles sont pleines")
-                    }
-               });
-            });
+
+            join_random_room_function (io, socket, room_list)
         }
     });
 
@@ -237,19 +191,6 @@ function game(socket_joined,socket) {
         }, 15000);
 };
 
-class player_role {
-    constructor(role, id) {
-        this.role = role;
-        this.id = id;
-    }
-}
 
-class game_room {
-    constructor(room_name, loop_game, sujet, verbe, complement) {
-        this.room_name = room_name;
-        this.loop_game = loop_game;
-        this.sujet = sujet
-        this.verbe = verbe
-        this.complement = complement
-    }
-}
+
+
